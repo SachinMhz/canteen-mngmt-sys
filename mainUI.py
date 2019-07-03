@@ -309,6 +309,10 @@ class MainInterface(object):
         self.successWindowWidget.hide()
         self.confirmBillLayoutWidget.hide()
         self.loginWindowWidget.show()
+        query = QSqlQuery()
+        query.exec_("UPDATE usersTable SET balance = "+str(self.remainingBalance)+" WHERE registration_no = "+self.registration_lineedit.text()+"")
+        self.setupUi(self.MainWindow)
+        self.MainWindow.show()
 
     def confirmBillWindow(self):
         self.confirmBillWidget = QtWidgets.QWidget(self.centralwidget)
