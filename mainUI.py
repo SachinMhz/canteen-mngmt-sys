@@ -23,6 +23,7 @@ class MainInterface(object):
         self.MainWindow = MainWindow
         self.ui.userName = self.userName
         self.ui.registrationNo = self.registrationNo
+        self.ui.currentBalance =self.currentBalance
         self.window.show()
         self.ui.userNameText.setText(str(self.userName))
         self.ui.regNoText.setText(str(self.registrationNo))
@@ -36,7 +37,6 @@ class MainInterface(object):
         self.currentBalance = 500
         self.totalCost = 0
         self.MainWindow = MainWindow
-        #MainWindow.setGeometry(0, 0,width,height)
         MainWindow.setWindowTitle("Interface")
         MainWindow.showFullScreen()
         #//for using in full screen
@@ -47,7 +47,6 @@ class MainInterface(object):
 
         self.userInfoArea = QtWidgets.QFrame(self.centralwidget)
         self.userInfoFrame()
-
 
         self.balanceFrame_bottomRight()
         self.billingArea = QtWidgets.QFrame(self.centralwidget)
@@ -266,14 +265,12 @@ class MainInterface(object):
             registration_list.append(registrationNo)
         RegistrationNo = self.registration_lineedit.text()
         passWord = self.password_lineedit.text()
-        print( registration_list)
+
         if RegistrationNo !="" and passWord != "":
             if RegistrationNo in registration_list:
                 index = registration_list.index(RegistrationNo)
-                print(index)
                 if str(password_list[index]) == passWord:
                     print("password matched")
-                    print("Logined in")
                     self.goToMainInterface()
                     self.userPosition = post_list[index]
                     if self.userPosition != "Admin":
@@ -287,7 +284,6 @@ class MainInterface(object):
                     self.showBalanceInfoAndDisableButton()
                     self.userName = str(username_list[index])
                     self.registrationNo = str(registration_list[index])
-                    print(self.currentBalance)
                 else:
                     self.noticelogin.setText("Password does not match.")
                     self.noticelogin.setStyleSheet("font:65 14pt \"Times New Roman\"; color:#a81010; font-weight:600")
@@ -483,7 +479,6 @@ class MainInterface(object):
             #frame index 0=frame 1=name 2=price 3 =quantity 4=Amount 5=RsPricelabel 6=RsAmountLabel 7=minus 8=plus 9=delete
             for frame in frameList:
                 for item in frame:
-                    #print(item.objectName())
                     if item.objectName() == objName +"foodLabel":
                         incQuantity = int(frame[3].text()) + 1
                         frame[3].setText(str(incQuantity))
@@ -503,45 +498,52 @@ class MainInterface(object):
         frame.setFrameShape(QtWidgets.QFrame.Box)
         frame.setFrameShadow(QtWidgets.QFrame.Plain)
         frame.setObjectName(objName +"Frame")
+        frame.setStyleSheet("border: 2px solid grey; border-radius: 5px;")
         minusButton = QtWidgets.QPushButton("-",frame)
         minusButton.setObjectName(objName +"minusButton")
-        minusButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px;}"
-                                ":hover{border: 2px solid pink; border-radius: 5px;}"
-                                    ":pressed{border: 2px solid grey; border-radius: 5px; background-color:pink; color:white;}")
-        minusButton.setGeometry(QtCore.QRect(200, 10, 20, 20))
+        minusButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px; font-size:14pt; font-weight:1000; color:black;}"
+                                ":hover{border: 2px solid #f24d0c; border-radius: 5px; }"
+                                    ":pressed{border: 2px solid grey; border-radius: 5px; background-color:#f24d0c; color:white;}")
+        minusButton.setGeometry(QtCore.QRect(200, 5, 20, 30))
         minusButton.clicked.connect(self.DecQuantity)
         plusButton = QtWidgets.QPushButton("+",frame)
-        plusButton.setGeometry(QtCore.QRect(250, 10, 20, 20))
+        plusButton.setGeometry(QtCore.QRect(250, 5, 20, 30))
         plusButton.setObjectName(objName +"plusButton")
-        plusButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px;}"
+        plusButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px;  font-size:12pt; font-weight:1000; color:black;}"
                                 ":hover{border: 2px solid green; border-radius: 5px;}"
                                     ":pressed{border: 2px solid grey; border-radius: 5px; background-color:green; color:white;}")
         plusButton.clicked.connect(self.IncQuantity)
         deleteButton = QtWidgets.QPushButton("x",frame)
-        deleteButton.setGeometry(QtCore.QRect(400 - 30, 10, 20, 20))
+        deleteButton.setGeometry(QtCore.QRect(400 - 30, 5, 20, 30))
         deleteButton.setObjectName(objName +"deleteButton")
         deleteButton.clicked.connect(self.deleteFrame)
-        deleteButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px;}"
-                                ":hover{border: 2px solid red; border-radius: 5px;}"
+        deleteButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px; font-size:12pt; font-weight:600; color:black;}"
+                                ":hover{border: 2px solid red; border-radius: 5px; }"
                                     ":pressed{border: 2px solid grey; border-radius: 5px; background-color:red; color:white;}")
         foodLabel = QtWidgets.QLabel(str(source.objectName()),frame)
         foodLabel.setGeometry(QtCore.QRect(10, 10, 100, 13))
         foodLabel.setObjectName(objName +"foodLabel")
+        foodLabel.setStyleSheet("border: 0px;")
         priceLabel = QtWidgets.QLabel(str(source.price),frame)
         priceLabel.setGeometry(QtCore.QRect(150, 10, 100, 13))
         priceLabel.setObjectName(objName +"priceLabel")
+        priceLabel.setStyleSheet("border: 0px;")
         quantityLabel = QtWidgets.QLabel(str(source.quantity),frame)
         quantityLabel.setGeometry(QtCore.QRect(230, 10, 16, 16))
         quantityLabel.setObjectName(objName +"quantityLabel")
+        quantityLabel.setStyleSheet("border: 0px;")
         amountLabel = QtWidgets.QLabel(str(source.amount),frame)
         amountLabel.setGeometry(QtCore.QRect(330, 8, 100, 16))
         amountLabel.setObjectName(objName +"Amount")
+        amountLabel.setStyleSheet("border: 0px;")
         rupeePriceLabel = QtWidgets.QLabel("Rs.",frame)
         rupeePriceLabel.setGeometry(QtCore.QRect(130, 10, 100, 13))
         rupeePriceLabel.setObjectName(objName +"RsPrice")
+        rupeePriceLabel.setStyleSheet("border: 0px;")
         rupeeAmountLabel = QtWidgets.QLabel("Rs.",frame)
         rupeeAmountLabel.setGeometry(QtCore.QRect(310, 10, 100, 13))
         rupeeAmountLabel.setObjectName(objName +"RsAmount")
+        rupeeAmountLabel.setStyleSheet("border: 0px;")
 
         self.showBalanceInfoAndDisableButton() #to update the balance Info if billLayout doesnt already have item
         self.billLayout.addWidget(frame)
@@ -569,7 +571,6 @@ class MainInterface(object):
         frameList = self.getFrameList()
         self.totalCost = 0
         if (len(frameList)==0 and len(pushButtons)!=0): #in no frames are present in billing
-            print(self.remainingBalance,self.currentBalance,pushButtons)
             self.remainingBalance = self.currentBalance
             for pushButton in pushButtons: #for enabling and disabling Button
                 if int(self.remainingBalance) >= int(pushButton.price) and pushButton.availability == 1:
@@ -578,7 +579,6 @@ class MainInterface(object):
                     pushButton.setEnabled(False)
         #frame index 0=frame 1=name 2=price 3 =quantity 4=Amount 5=RsPricelabel 6=RsAmountLabel 7=minus 8=plus 9=delete
         for frame in frameList:
-            print("****",frameList)
             self.totalCost += int(frame[4].text())
             self.remainingBalance = self.currentBalance - self.totalCost
             for pushButton in pushButtons: #for enabling and disabling Button
@@ -738,11 +738,14 @@ class MainInterface(object):
         itemPrice.setAlignment(QtCore.Qt.AlignCenter)
         itemPrice.setStyleSheet("QLabel {font-size:15pt; font-weight:600; color:#00007f;}")
         if availability == 0:
-            print(disName,"false")
             itemImageButton.setEnabled(False)
+            frame.setStyleSheet(":hover{border: 0px; border-radius: 5px;}")
+            itemPrice.setStyleSheet("QLabel {font-size:15pt; font-weight:600; color:#00007f; border:0px;}")
+            itemName.setStyleSheet("QLabel {font-size:15pt; font-weight:600; color:#00007f; border:0px;}")
         else:
-            print("***",disName,"True")
             frame.setStyleSheet(":hover{border: 2px solid green; border-radius: 5px;}")
+            itemPrice.setStyleSheet("QLabel {font-size:15pt; font-weight:600; color:#00007f; border:0px;}")
+            itemName.setStyleSheet("QLabel {font-size:15pt; font-weight:600; color:#00007f; border:0px;}")
             itemImageButton.setEnabled(True)
 
         #setting image to the button

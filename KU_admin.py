@@ -29,6 +29,12 @@ class Ui_MainWindow(object):
         self.ui.loginWindowWidget.hide()
         MainWindow.close()
         self.MainWindow = MainWindow
+        self.ui.userName = self.userName
+        self.ui.registrationNo = self.registrationNo
+        self.ui.userNameText.setText(str(self.userName))
+        self.ui.regNoText.setText(str(self.registrationNo))
+        self.ui.currentBalance = self.currentBalance
+        self.ui.showBalanceInfoAndDisableButton()
         self.window.show()
 
     def setupUi(self, MainWindow):
@@ -266,8 +272,6 @@ class Ui_MainWindow(object):
         foodName1 = source.foodName
         query = QSqlQuery()
         query.exec_("UPDATE foodTable SET availability = 1 WHERE foodName = '"+foodName1+"' ")
-        print(query.exec())
-        print("********************************")
         #creating a list of frames in lucnhTab
         framesLunch = self.lunch_tab.findChildren(QtWidgets.QFrame)
         framesDrink = self.drinks_tab.findChildren(QtWidgets.QFrame)
@@ -295,7 +299,6 @@ class Ui_MainWindow(object):
             food_model.setTable("foodTable")
             food_model.select()
             record = food_model.record()
-            #print(self.category_comboBox.currentText())
             record.setValue("image",self.foodImagePath)
             record.setValue("foodName", input_name)
             record.setValue("price",input_price)
@@ -368,7 +371,7 @@ class Ui_MainWindow(object):
     def showingImage2(self):
         #foodList = [["Rice Set","60","cat","path"],["Curd","25","cat","path"],["Chicken Roast","60","drinks","path"],["Panner","80","cat","path"],["Fish","60","cat","path"],["Chicken Curry ","60","cat","path"],["Something","60","cat","path"]]
         foodList =self.getFoodItemList()
-        print(foodList)
+
         imgWi,imgHi=self.width*.12,self.height*.2
         imgXDrinks, imgYDrinks= self.oneUnit, self.oneUnit
         imgXSnacks, imgYSnacks= self.oneUnit, self.oneUnit
