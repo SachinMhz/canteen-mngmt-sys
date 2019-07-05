@@ -1,4 +1,5 @@
 import sys
+import os
 from db import *
 from PyQt5.QtSql import *
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -16,8 +17,8 @@ class Ui_MainWindow(object):
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_Register()
         self.ui.setupUi(self.window)
-        self.MainWindow = MainWindow
-        self.coverFrame.show()
+        #self.MainWindow = MainWindow
+        #self.coverFrame.show()
         self.window.show()
 
     def openUserInterface(self,MainWindow):
@@ -25,7 +26,7 @@ class Ui_MainWindow(object):
         self.window = QtWidgets.QMainWindow()
         self.ui = MainInterface()
         self.ui.setupUi(self.window)
-        self.ui.loginWindowWidget.show()
+        self.ui.loginWindowWidget.hide()
         MainWindow.close()
         self.MainWindow = MainWindow
         self.window.show()
@@ -36,6 +37,7 @@ class Ui_MainWindow(object):
         MainWindow.showFullScreen()
         self.userName = "0"
         self.registrationNo = "0"
+        self.foodImagePath = ""
         # width,height= MainWindow.frameGeometry().width(),MainWindow.frameGeometry().height()
         self.width,self.height = MainWindow.frameGeometry().width(),MainWindow.frameGeometry().height()
         self.oneUnit = (self.width + self.height)/100
@@ -49,17 +51,13 @@ class Ui_MainWindow(object):
         self.display_frame.setFrameShadow(QtWidgets.QFrame.Plain)
         self.display_frame.setObjectName("display_frame")
 
-
         self.username_display_frame = QtWidgets.QFrame(self.display_frame)
-        self.username_display_frame.setGeometry(QtCore.QRect(3,0, self.width*.7 -2 , self.height*.15-2 + 35))
+        self.username_display_frame.setGeometry(QtCore.QRect(1,1, self.width*.7 -2 , self.height*.15-2))
         self.username_display_frame.setFrameShape(QtWidgets.QFrame.Box)
         self.username_display_frame.setFrameShadow(QtWidgets.QFrame.Plain)
         self.username_display_frame.setObjectName("username_display_frame")
         self.userInfoFrame()
 
-        #making menu boarder
-        self.menuFrame = QtWidgets.QFrame(self.centralwidget)
-        self.makeMenuFrame()
         self.tabWidget = QtWidgets.QTabWidget(self.display_frame)
         self.tabWidget.setObjectName("tabWidget")
         self.tabWidget.setGeometry(QtCore.QRect(2, self.height*.15 +2, self.width*.7 -3, self.height*.85 -3))
@@ -77,43 +75,49 @@ class Ui_MainWindow(object):
 
         # self.display_layout.addWidget(self.tabWidget)
         self.input_frame = QtWidgets.QFrame(self.centralwidget)
-        self.input_frame.setGeometry(QtCore.QRect(self.width*.7 , 35, self.width*.3 -2, self.height))
+        self.input_frame.setGeometry(QtCore.QRect(self.width*.7 ,52, self.width*.3 -2, self.height))
         self.input_frame.setFrameShape(QtWidgets.QFrame.Box)
         self.input_frame.setFrameShadow(QtWidgets.QFrame.Plain)
         self.input_frame.setObjectName("input_frame")
-        self.layoutWidget1 = QtWidgets.QWidget(self.input_frame)
-        self.layoutWidget1.setGeometry(QtCore.QRect(10, self.height*.15 +10, self.width*.3-20, self.height*.45))
-        self.layoutWidget1.setObjectName("layoutWidget1")
-        self.image_layout = QtWidgets.QVBoxLayout(self.layoutWidget1)
-        self.image_layout.setContentsMargins(0, 0, 0, 0)
-        self.image_layout.setObjectName("image_layout")
-        self.image_label = QtWidgets.QLabel(self.layoutWidget1)
-        #self.image_label.setText("")
+
+        self.helpLabel = QtWidgets.QLabel("Select an item to make it \n available.",self.input_frame)
+        self.helpLabel.setGeometry(QtCore.QRect(10,5, 400, 50))
+        self.helpLabel.setStyleSheet("font:150 18pt \"Times New Roman\"; color:black; font-weight:600;")
+
+        # self.layoutWidget1 = QtWidgets.QWidget(self.input_frame)
+        # self.layoutWidget1.setGeometry(QtCore.QRect(20, self.height*.15 +10, self.width*.3-40, self.height*.45))
+        # self.layoutWidget1.setObjectName("layoutWidget1")
+        # self.image_layout = QtWidgets.QVBoxLayout(self.input_frame)
+        # self.image_layout.setContentsMargins(0, 0, 0, 0)
+        # self.image_layout.setObjectName("image_layout")
         self.input_heading_frame = QtWidgets.QFrame(self.input_frame)
-        self.input_heading_frame.setGeometry(QtCore.QRect(0,35, self.width*.3 -2 , self.height*.15-2))
+        self.input_heading_frame.setGeometry(QtCore.QRect(0,62, self.width*.3 -2 , 50))
         self.input_heading_frame.setFrameShape(QtWidgets.QFrame.Box)
         self.input_heading_frame.setFrameShadow(QtWidgets.QFrame.Plain)
         self.input_heading_frame.setObjectName("input_heading_frame")
 
         self.display_heading_label = QtWidgets.QLabel("Add Food Items!!", self.input_heading_frame)
-        # self.display_heading_label.setGeometry(QtCore.QRect(10,0, self.width*.1,20))
-        self.display_heading_label.setGeometry(QtCore.QRect(80, 30, 250, 50))
+        self.display_heading_label.setGeometry(QtCore.QRect(0, 0, self.width*.3 -2, 50))
         self.display_heading_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.display_heading_label.setStyleSheet("QLabel {font-size:20pt; font-weight:600; color:#00007f;}")
+        self.display_heading_label.setStyleSheet("QLabel {font-size:20pt; font-weight:600; background-color:#00007f; color:white;}")
 
-
+        self.image_label = QtWidgets.QLabel(self.input_frame)
         self.image_label.setObjectName("image_label")
-        # self.image_label.setGeometry(0,0,self.width*.3-2, self.height*.40)
-        self.image_layout.addWidget(self.image_label)
-        self.select_image_btn = QtWidgets.QPushButton(self.layoutWidget1)
-        self.select_image_btn.setObjectName("select_image_btn")
+        self.image_label.setGeometry(10,120,self.width*.3-20, self.height*.45)
 
-        self.select_image_btn.setText("Select Image")
+        # self.image_layout.addWidget(self.image_label)
+        self.select_image_btn = QtWidgets.QPushButton("Select Image",self.input_frame)
+        self.select_image_btn.setObjectName("select_image_btn")
+        self.select_image_btn.setGeometry(QtCore.QRect(10,self.height*.65-30,self.width*.3-20,45))
+        self.select_image_btn.setStyleSheet("font:90 13pt \"Times New Roman\"; color: #00007f; font-weight:600;")
         self.select_image_btn.clicked.connect(self.selectImage)
-        self.image_layout.addWidget(self.select_image_btn)
+
+        # self.image_layout.addWidget(self.select_image_btn)
         self.layoutWidget2 = QtWidgets.QWidget(self.input_frame)
-        self.layoutWidget2.setGeometry(QtCore.QRect(20, self.height*.65, self.width*.3-40, self.height*.30))
+        self.layoutWidget2.setGeometry(QtCore.QRect(20, self.height*.65+20, self.width*.3 - 40, self.height*.2-50))
         self.layoutWidget2.setObjectName("layoutWidget2")
+        self.layoutWidget2.setStyleSheet("font:90 13pt \"Times New Roman\"; color:black; font-weight:500;")
+
         self.input_layout = QtWidgets.QVBoxLayout(self.layoutWidget2)
         self.input_layout.setContentsMargins(0, 0, 0, 0)
         self.input_layout.setObjectName("input_layout")
@@ -150,18 +154,30 @@ class Ui_MainWindow(object):
         self.category_comboBox.addItem("Drinks")
         self.category_layout.addWidget(self.category_comboBox)
         self.input_layout.addLayout(self.category_layout)
-        self.admin_dialog_btn = QtWidgets.QDialogButtonBox(self.layoutWidget2)
-        self.admin_dialog_btn.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Save)
-        self.admin_dialog_btn.setObjectName("admin_dialog_btn")
-        self.input_layout.addWidget(self.admin_dialog_btn)
-        self.admin_dialog_btn.clicked.connect(self.saveFoodItem)
-        self.admin_dialog_btn.rejected.connect(self.clearInput)
 
-        #self.showData()
+        self.save_btn = QtWidgets.QPushButton("Save", self.input_frame)
+        self.save_btn.setObjectName("save_btn")
+        self.save_btn.setGeometry(QtCore.QRect( 20,self.height*.85, 180, 40))
+        self.save_btn.setStyleSheet("font:90 13pt \"Times New Roman\"; color: #00007f; font-weight:600;")
+        self.save_btn.clicked.connect(self.saveFoodItem)
+        if self.foodImagePath == "":
+            self.save_btn.setEnabled(False)
+        else:
+            self.save_btn.setEnabled(True)
 
-        # self.test_save_btn = QtWidgets.QPushButton(self.layoutWidget1)
-        # self.test_save_btn.setObjectName("test_save_btn")
-        # self.test_save_btn.clicked.connect(self.saveFoodItem)
+        self.cancel_btn = QtWidgets.QPushButton("Cancel", self.input_frame)
+        self.cancel_btn.setObjectName("cancel_btn")
+        self.cancel_btn.setGeometry(QtCore.QRect( 220 ,self.height*.85,180, 40))
+        self.cancel_btn.setStyleSheet("font:90 13pt \"Times New Roman\"; color: #00007f; font-weight:600;")
+        self.cancel_btn.clicked.connect(self.clearInput)
+
+        self.showWarningText = QtWidgets.QLabel("", self.input_frame)
+        self.showWarningText.setGeometry(QtCore.QRect( 50 ,self.height*.85-40,180, 40))
+        self.showWarningText.setStyleSheet("font:90 13pt \"Times New Roman\"; color: #00007f; font-weight:500; color:red;")
+
+        #making menu boarder
+        self.menuFrame = QtWidgets.QFrame(self.centralwidget)
+        self.makeMenuFrame()
 
         self.coverFrame = QtWidgets.QFrame(self.centralwidget)
         self.coverFrame.setGeometry(QtCore.QRect(0,0,1500,1500))
@@ -179,22 +195,27 @@ class Ui_MainWindow(object):
         frame.setObjectName(objName)
 
     def makeMenuFrame(self):
-        self.makeFrame(self.menuFrame,"menuFrame",0,0,self.width ,35)
+        self.makeFrame(self.menuFrame,"menuFrame",0,0,self.width ,52)
         self.menuFrame.setStyleSheet("background-color: #00007f;")
 
         self.menuLabel = QtWidgets.QLabel("Canteen Management System ",self.menuFrame)
-        self.menuLabel.setGeometry(QtCore.QRect(5, 1, self.width,30))
-        self.menuLabel.setStyleSheet("font:150 20pt \"Times New Roman\"; color:white;")
-        # print(self.userName)
+        self.menuLabel.setGeometry(QtCore.QRect(0, -1, self.width,50))
+        self.menuLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.menuLabel.setStyleSheet("font:150 35pt \"Times New Roman\"; color:white;")
+
         self.RegisterButton = QtWidgets.QPushButton("Register",self.menuFrame)
-        self.RegisterButton.setGeometry(QtCore.QRect(self.width-210,3,100,30))
+        self.RegisterButton.setGeometry(QtCore.QRect(self.width-210,3,100,45))
         self.RegisterButton.clicked.connect(partial(self.openRegisterInterface))
-        self.RegisterButton.setStyleSheet("background-color: green;")
+        self.RegisterButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px; background-color: #44449a; color:white; font-size:15pt; font-weight:600;}"
+                                ":hover{border: 2px solid green; border-radius: 5px;}"
+                                    ":pressed{border: 2px solid grey; border-radius: 5px; background-color:#00007f; color:white;}")
 
         exitButton = QtWidgets.QPushButton("Exit",self.menuFrame)
-        exitButton.setGeometry(QtCore.QRect(self.width-105,3,100,30))
+        exitButton.setGeometry(QtCore.QRect(self.width-105,3,100,45))
         exitButton.clicked.connect(partial(self.openUserInterface,self.MainWindow))
-        exitButton.setStyleSheet("background-color: red;")
+        exitButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px; background-color: #44449a; color:white; font-size:15pt; font-weight:600;}"
+                                ":hover{border: 2px solid green; border-radius: 5px;}"
+                                    ":pressed{border: 2px solid grey; border-radius: 5px; background-color:#00007f; color:white;}")
 
     def userInfoFrame(self):
         font = QtGui.QFont("Times New Roman", 15)
@@ -210,66 +231,83 @@ class Ui_MainWindow(object):
         self.userNameText.setFont(font)
         self.userNameText.setStyleSheet("QLabel {font-size:20pt; font-weight:600; color: black;}")
 
+        self.regLabel = QtWidgets.QLabel("Registration No.: ",self.username_display_frame)
+        self.regLabel.setGeometry(QtCore.QRect(450,50,250,50))
+        self.regLabel.setFont(font)
+        self.regLabel.setStyleSheet("QLabel {font-size:20pt; font-weight:600; color: black;}")
+
         self.regNoText = QtWidgets.QLabel(self.username_display_frame)
-        self.regNoText.setGeometry(QtCore.QRect(250,50,200,50))
+        self.regNoText.setGeometry(QtCore.QRect(675,50,300,50))
         #self.regNoText.setText(str(self.registrationNo))
         self.regNoText.setFont(font)
         self.regNoText.setStyleSheet("QLabel {font-size:20pt; font-weight:600; color: black;}")
 
     def selectImage(self, MainWindow):
-        img_file = QFileDialog.getOpenFileName(self.layoutWidget1,'??????','./','Image Files(*.png *.jpg *.bmp)')
-        global foodImagePath
-        foodImagePath = img_file[0]
-        pixmap = QPixmap(foodImagePath)
+        img_file = QFileDialog.getOpenFileName(self.MainWindow,'??????','./','Image Files(*.png *.jpg *.bmp)')
+        self.foodImagePath = os.path.basename(img_file[0])
+        pixmap = QPixmap(img_file[0])
         w = self.image_label.width()
         h = self.image_label.height()
-
         self.image_label.setPixmap(pixmap.scaled(w,h))
+        if self.foodImagePath == "":
+            self.save_btn.setEnabled(False)
+        else:
+            self.save_btn.setEnabled(True)
 
     def clearInput(self):
         self.name_lineEdit.setText("")
         self.price_lineEdit.setText("")
         self.image_label.clear()
-        self.setupUi(MainWindow)
+        self.setupUi(self.MainWindow)
 
     def update(self):
         source = self.MainWindow.sender()
         objName = source.objectName()
+        foodName1 = source.foodName
+        query = QSqlQuery()
+        query.exec_("UPDATE foodTable SET availability = 1 WHERE foodName = '"+foodName1+"' ")
+        print(query.exec())
+        print("********************************")
         #creating a list of frames in lucnhTab
         framesLunch = self.lunch_tab.findChildren(QtWidgets.QFrame)
         framesDrink = self.drinks_tab.findChildren(QtWidgets.QFrame)
         frames = framesLunch + framesDrink
+
         if source.availability == 0:
             source.availability = 1
             for frame in frames:
                 if frame.objectName() == source.frame:
+                    query.exec_("UPDATE foodTable SET availability = 1 WHERE foodName = '"+foodName1+"' ")
                     frame.setStyleSheet("#"+frame.objectName()+ " {border : 5px solid green;}")
 
         elif source.availability ==1:
             source.availability = 0
             for frame in frames:
                 if frame.objectName() == source.frame:
+                    query.exec_("UPDATE foodTable SET availability = 0 WHERE foodName = '"+foodName1+"' ")
                     frame.setStyleSheet("#"+frame.objectName()+ " {border : 5px solid red;}")
+
     def saveFoodItem(self):
-        food_model = QSqlTableModel()
-        food_model.setTable("foodTable")
-        food_model.select()
-        record = food_model.record()
-        #print(self.category_comboBox.currentText())
         input_name = self.name_lineEdit.text()
         input_price = self.price_lineEdit.text()
-        record.setValue("image",foodImagePath)
-        record.setValue("foodName", input_name)
-        record.setValue("price",input_price)
-        record.setValue("category", self.category_comboBox.currentText())
-        record.setValue("availability", 0)
-
-        if food_model.insertRecord(-1, record):
+        if input_name !="" and input_price != "":
+            food_model = QSqlTableModel()
+            food_model.setTable("foodTable")
             food_model.select()
-        # self.frameImage(display_name,objName, frameName,display_price,10,10, 100,100 )
+            record = food_model.record()
+            #print(self.category_comboBox.currentText())
+            record.setValue("image",self.foodImagePath)
+            record.setValue("foodName", input_name)
+            record.setValue("price",input_price)
+            record.setValue("category", self.category_comboBox.currentText())
+            record.setValue("availability", 0)
 
-        self.clearInput()
-
+            if food_model.insertRecord(-1, record):
+                food_model.select()
+            # self.frameImage(display_name,objName, frameName,display_price,10,10, 100,100 )
+            self.clearInput()
+        else:
+            self.showWarningText.setText("PLease fill all the fields.")
 
     def frameImage(self,disName,objName,frameName,price,xPos,yPos,imgWi,imgHi,path,cat,availability):
         if cat == "Lunch/Snacks":
@@ -293,6 +331,7 @@ class Ui_MainWindow(object):
         itemImageButton.setObjectName(objName)
         itemImageButton.availability = availability
         itemImageButton.frame = frameName
+        itemImageButton.foodName = disName
         itemPrice = QtWidgets.QLabel("Rs. "+price,frame)
         itemPrice.setGeometry(QtCore.QRect(0 , self.oneUnit + imgHi, imgWi,self.oneUnit))
         itemPrice.setAlignment(QtCore.Qt.AlignCenter)
@@ -300,7 +339,7 @@ class Ui_MainWindow(object):
         itemPrice.setStyleSheet("QLabel {font-size:15pt; font-weight:600; color:#00007f;}")
         #setting image to the button
         if (path != 0):
-            pixmap = QPixmap(path)
+            pixmap = QPixmap("image/"+path)
             w = itemImageButton.width()
             h = itemImageButton.height()
             scaled_pixmap = pixmap.scaled(h, w)
@@ -359,8 +398,6 @@ class Ui_MainWindow(object):
                     imgXSnacks = self.oneUnit
                     xSnacksCount = 0
                     ySnacksCount += 1
-
-
 
 if __name__ == "__main__":
     import sys

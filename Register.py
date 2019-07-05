@@ -16,6 +16,7 @@ class Ui_Register(object):
     def setupUi(self, login):
         login.setObjectName("login")
         login.resize(500, 400)
+        login.setWindowTitle("Register User")
         # self.model = QSqlTableModel()
         # self.model.setTable("usersTable")
         # self.model.select()
@@ -27,10 +28,12 @@ class Ui_Register(object):
         font.setItalic(True)
 
         self.RegisterLabel = QtWidgets.QLabel(login)
-        self.RegisterLabel.setGeometry(QtCore.QRect(50, 5, 250, 60))
+        self.RegisterLabel.setGeometry(QtCore.QRect(0, 5, 500, 60))
+        self.RegisterLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.RegisterLabel.setFont(font)
         self.RegisterLabel.setObjectName("RegisterLabel")
         self.RegisterLabel.setText("Registration")
+        self.RegisterLabel.setStyleSheet("font:90 30pt \"Times New Roman\"; color: #00007f; font-weight:600;")
 
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
@@ -53,14 +56,14 @@ class Ui_Register(object):
         self.RegisterSubmitButton = QtWidgets.QPushButton(login)
         self.RegisterSubmitButton.setGeometry(QtCore.QRect(90, 300, 150,50))
         self.RegisterSubmitButton.setObjectName("RegisterSubmitButton")
-        self.RegisterSubmitButton.setStyleSheet("font:75 20pt \"Times New Roman\";")
+        self.RegisterSubmitButton.setStyleSheet("font:90 13pt \"Times New Roman\"; color: #00007f; font-weight:600;")
         self.RegisterSubmitButton.setText("Register")
         self.RegisterSubmitButton.clicked.connect(self.check)
 
         self.RegisterCancelButton = QtWidgets.QPushButton(login)
         self.RegisterCancelButton.setGeometry(QtCore.QRect(270, 300, 150, 50))
         self.RegisterCancelButton.setObjectName("RegisterCancelButton")
-        self.RegisterCancelButton.setStyleSheet("font:75 20pt \"Times New Roman\";")
+        self.RegisterCancelButton.setStyleSheet("font:90 13pt \"Times New Roman\"; color: #00007f; font-weight:600;")
         self.RegisterCancelButton.setText("Cancel")
         self.RegisterCancelButton.clicked.connect(self.closeRegister)
         self.LoginRegistrationLabel = QtWidgets.QLabel(login)
