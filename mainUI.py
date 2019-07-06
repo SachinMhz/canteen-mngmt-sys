@@ -73,7 +73,8 @@ class MainInterface(object):
         self.makeFrame(self.mainArea,"mainArea",1, height*.15 +1, width*.7 -2, height*.85 -2)
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.tabWidget.setGeometry(QtCore.QRect(2, height*.15 +2, width*.7 -3, height*.85 -3))
-        self.tabWidget.setStyleSheet("font:150 25pt \"Times New Roman\"; color: #00007f; font-weight:600;")
+        self.tabWidget.setObjectName("self.tabWidget")
+        self.tabWidget.setStyleSheet(" font:150 25pt \"Times New Roman\"; color: #00007f; font-weight:600;")
         self.lunchTab = QtWidgets.QWidget()
         self.lunchTab.setObjectName("lunchTab")
         self.lunchTab.setStyleSheet("font:150 15pt \"Times New Roman\"; color: #00007f; font-weight:600;")
@@ -144,9 +145,16 @@ class MainInterface(object):
         self.menuLabel.setStyleSheet("font:150 35pt \"Times New Roman\"; color:white;")
 
         self.AdminButton = QtWidgets.QPushButton("Admin",self.menuFrame)
-        self.AdminButton.setGeometry(QtCore.QRect(self.width-210,3,100,45))
+        self.AdminButton.setGeometry(QtCore.QRect(self.width-315,3,100,45))
         self.AdminButton.clicked.connect(partial(self.openAdminWindow,self.MainWindow))
         self.AdminButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px; background-color: #44449a; color:white; font-size:15pt; font-weight:600;}"
+                                ":hover{border: 2px solid green; border-radius: 5px;}"
+                                    ":pressed{border: 2px solid grey; border-radius: 5px; background-color:#00007f; color:white;}")
+
+        self.helpButton = QtWidgets.QPushButton("Help",self.menuFrame)
+        self.helpButton.setGeometry(QtCore.QRect(self.width-210,3,100,45))
+        self.helpButton.clicked.connect(self.showHelp)
+        self.helpButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px; background-color: #44449a; color:white; font-size:15pt; font-weight:600;}"
                                 ":hover{border: 2px solid green; border-radius: 5px;}"
                                     ":pressed{border: 2px solid grey; border-radius: 5px; background-color:#00007f; color:white;}")
 
@@ -156,6 +164,26 @@ class MainInterface(object):
         exitButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px; background-color: #44449a; color:white; font-size:15pt; font-weight:600;}"
                                 ":hover{border: 2px solid green; border-radius: 5px;}"
                                     ":pressed{border: 2px solid grey; border-radius: 5px; background-color:#00007f; color:white;}")
+        self.helpLabel = QtWidgets.QLabel(self.centralwidget)
+        self.helpLabel.hide()
+        self.closeButton = QtWidgets.QPushButton("Close",self.centralwidget)
+        self.closeButton.hide()
+
+
+    def showHelp(self):
+        pixmap = QPixmap("image/help.png")
+        self.helpLabel.setPixmap(pixmap.scaled(self.width,self.height))
+        self.helpLabel.show()
+        self.closeButton.setGeometry(QtCore.QRect(self.width-105,3,100,45))
+        self.closeButton.clicked.connect(self.hideHelp)
+        self.closeButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px; background-color: #44449a; color:white; font-size:15pt; font-weight:600;}"
+                                ":hover{border: 2px solid green; border-radius: 5px;}"
+                                    ":pressed{border: 2px solid grey; border-radius: 5px; background-color:#00007f; color:white;}")
+        self.closeButton.show()
+
+    def hideHelp(self):
+        self.helpLabel.hide()
+        self.closeButton.hide()
 
     def showLoginWindow(self):
         self.loginWindowWidget = QtWidgets.QWidget(self.centralwidget)
@@ -471,6 +499,7 @@ class MainInterface(object):
         for frame in frames:
             if frame.objectName() == source.frame:
                 frame.setStyleSheet("#"+frame.objectName()+ " {border : 3px solid blue;}" "#"+frame.objectName()+":hover{border: 2px solid green; border-radius: 5px;}")
+                break
 
         #checking to see if bill has items or not
         labels = self.billLayoutWidget.findChildren(QtWidgets.QLabel)
@@ -575,37 +604,70 @@ class MainInterface(object):
         pushButtonsLunch = self.lunchTab.findChildren(QtWidgets.QPushButton) #adding pushButton from lunchTab to list
         pushButtonsDrink = self.drinkTab.findChildren(QtWidgets.QPushButton) #adding pushButton from drinkTab to list
         pushButtons = pushButtonsLunch + pushButtonsDrink
+
+        labelLunch =self.lunchTab.findChildren(QtWidgets.QLabel)
+        labelDrinks =self.drinkTab.findChildren(QtWidgets.QLabel)
+        labels = labelLunch + labelDrinks
+        textLabels = []
+        for name,price,text in zip (labels[0::3],labels[1::3],labels[2::3]):
+            list = [name,price,text]
+            textLabels.append(text)
+
         frameList = self.getFrameList()
         self.totalCost = 0
-        if (len(frameList)==0 and len(pushButtons)!=0): #in no frames are present in billing
+        if (len(frameList)==0 and len(pushButtons)!=0) :
             self.remainingBalance = self.currentBalance
-            for pushButton in pushButtons: #for enabling and disabling Button
-                if int(self.remainingBalance) >= int(pushButton.price) and pushButton.availability == 1:
-                    pushButton.setEnabled(True)
-                else:
-                    pushButton.setEnabled(False)
-        #frame index 0=frame 1=name 2=price 3 =quantity 4=Amount 5=RsPricelabel 6=RsAmountLabel 7=minus 8=plus 9=delete
-        for frame in frameList:
-            self.totalCost += int(frame[4].text())
-            self.remainingBalance = self.currentBalance - self.totalCost
-            for pushButton in pushButtons: #for enabling and disabling Button
-                if int(self.remainingBalance) >= int(pushButton.price) and pushButton.availability == 1:
-                    frame[8].setEnabled(True)
-                    pushButton.setEnabled(True)
-                else:
-                    pushButton.setEnabled(False)
-                    frame[8].setEnabled(False)
-        self.totalCost -= frameDeletedAmount #if frame is deleted which decreases the total cost
-        self.remainingBalance = self.currentBalance - self.totalCost
+             #in no frames are present in billing
+            for i in range(0,len(pushButtons)): #for enabling and disabling Button
+                if pushButtons[i].availability == 0:
+                    textLabels[i].show()
+                    textLabels[i].setText("Unavailabe")
+                    textLabels[i].setStyleSheet("color:#850f2a; background-color:grey; font:15pt; border: 2px solid grey; border-radius: 5px; background-color:grey; font-weight:600; ")
+                    pushButtons[i].setEnabled(False)
 
-        if len(frameList) != 0 and len(pushButtons)!=0:
-            for pushButton in pushButtons: #for enabling and disabling Button
-                if self.remainingBalance >= int(pushButton.price) and pushButton.availability == 1:
-                    pushButton.setEnabled(True)
-                    frame[8].setEnabled(True)
+                elif int(self.remainingBalance) <= int(pushButtons[i].price) :
+                    pushButtons[i].setEnabled(False)
+                    textLabels[i].show()
+                    textLabels[i].setText("insufficient \n Balance")
+                    textLabels[i].setStyleSheet("color:#850f2a; background-color:grey; font:15pt; border: 2px solid grey; border-radius: 5px; background-color:grey; font-weight:600;" )
                 else:
-                    pushButton.setEnabled(False)
-                    frame[8].setEnabled(False)
+                    textLabels[i].hide()
+                    pushButtons[i].setEnabled(True)
+        else:
+            #frame index 0=frame 1=name 2=price 3 =quantity 4=Amount 5=RsPricelabel 6=RsAmountLabel 7=minus 8=plus 9=delete
+            for frame in frameList:
+                self.totalCost += int(frame[4].text())
+                self.remainingBalance = self.currentBalance - self.totalCost
+            for frame in frameList:
+                if self.remainingBalance < int(frame[2].text()):
+                    frame[9].setEnabled(False)
+                    frame[9].setStyleSheet("*{border: 2px solid grey; border-radius: 5px;  font-size:13pt; font-weight:1000; color:black; background-color:grey;}")
+                else:
+                    frame[9].setEnabled(True)
+                    frame[9].setStyleSheet("*{border: 2px solid grey; border-radius: 5px;  font-size:13pt; font-weight:1000; color:black;}"
+                            ":hover{border: 2px solid green; border-radius: 5px;}"
+                                ":pressed{border: 2px solid grey; border-radius: 5px; background-color:green; color:white;}")
+
+
+            self.totalCost -= frameDeletedAmount
+            self.remainingBalance = self.currentBalance - self.totalCost
+             #in no frames are present in billing
+            for i in range(0,len(pushButtons)): #for enabling and disabling Button
+                if pushButtons[i].availability == 0:
+                    textLabels[i].show()
+                    textLabels[i].setText("Unavailabe")
+                    textLabels[i].setStyleSheet("color:#850f2a; background-color:grey; font:15pt; border: 2px solid grey; border-radius: 5px; background-color:grey; font-weight:600; ")
+                    pushButtons[i].setEnabled(False)
+
+                elif int(self.remainingBalance) <= int(pushButtons[i].price) :
+                    pushButtons[i].setEnabled(False)
+                    textLabels[i].show()
+                    textLabels[i].setText("insufficient Balance")
+                    textLabels[i].setStyleSheet("color:#850f2a; background-color:grey; font:15pt; border: 2px solid grey; border-radius: 5px; background-color:grey; font-weight:600;" )
+                else:
+                    textLabels[i].hide()
+                    pushButtons[i].setEnabled(True)
+
 
         self.totalCostAmount.setText("Rs. "+ str(self.totalCost))
         self.remainingBalanceAmount.setText("Rs. "+ str(self.remainingBalance))
@@ -654,7 +716,7 @@ class MainInterface(object):
         for frame in frames:
             if frameName==0:
                 frame.setStyleSheet("#"+frame.objectName()+ " {border : 1px solid black;}" "#"+frame.objectName()+":hover{border: 3px solid green; border-radius: 5px;}")
-            if str(frame.objectName()) == frameName:
+            elif str(frame.objectName()) == frameName:
                 frame.setStyleSheet("#"+frame.objectName()+ " {border : 1px solid black;}" "#"+frame.objectName()+":hover{border: 3px solid green; border-radius: 5px;}")
         #"""
 
@@ -757,7 +819,7 @@ class MainInterface(object):
         itemName = QtWidgets.QLabel(disName,frame)
         itemName.setGeometry(QtCore.QRect(0 , 0, imgWi,oneUnit))
         itemName.setAlignment(QtCore.Qt.AlignCenter)
-        itemName.setStyleSheet("QLabel {font-size:15pt; font-weight:600; color:#00007f;}")
+        itemName.setStyleSheet("font-size:135t; font-weight:600; color:#00007f;")
         itemImageButton = QtWidgets.QPushButton( frame)
         itemImageButton.setGeometry(QtCore.QRect(5 , oneUnit, imgWi-10,imgHi))
         itemImageButton.setObjectName(objName)
@@ -771,7 +833,11 @@ class MainInterface(object):
         itemPrice = QtWidgets.QLabel("Rs. "+price,frame)
         itemPrice.setGeometry(QtCore.QRect(0 , oneUnit + imgHi, imgWi,oneUnit))
         itemPrice.setAlignment(QtCore.Qt.AlignCenter)
-        itemPrice.setStyleSheet("QLabel {font-size:15pt; font-weight:600; color:#00007f;}")
+        itemPrice.setStyleSheet("QLabel {font-size:15pt; font-weight:600; color:red;}")
+        itemDetail = QtWidgets.QLabel(" test ",frame)
+        itemDetail.setObjectName(objName+"text")
+        itemDetail.setGeometry(QtCore.QRect(10 , imgHi/2+40, imgWi-20,45))
+        itemDetail.setAlignment(QtCore.Qt.AlignCenter)
 
         #setting image to the button
         if (path != 0):

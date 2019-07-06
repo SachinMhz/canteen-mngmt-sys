@@ -10,10 +10,6 @@ import shutil
 
 from PyQt5.QtGui import QPixmap
 
-print( "\\")
-
-
-
 class Ui_MainWindow(object):
     def openRegisterInterface(self,MainWindow):
         from Register import Ui_Register
@@ -30,7 +26,6 @@ class Ui_MainWindow(object):
         self.window = QtWidgets.QMainWindow()
         self.ui = MainInterface()
         self.ui.setupUi(self.window)
-        self.ui.loginWindowWidget.hide()
         MainWindow.close()
         self.MainWindow = MainWindow
         self.ui.userName = self.userName
@@ -38,8 +33,7 @@ class Ui_MainWindow(object):
         self.ui.userNameText.setText(str(self.userName))
         self.ui.regNoText.setText(str(self.registrationNo))
         self.ui.currentBalance = self.currentBalance
-        self.ui.showBalanceInfoAndDisableButton()
-        self.ui.removeHighLight()
+        self.ui.goToMainInterface()
         self.window.show()
 
     def setupUi(self, MainWindow):
@@ -50,6 +44,7 @@ class Ui_MainWindow(object):
         self.registrationNo = "0"
         self.foodImagePath = ""
         self.currentBalance = 0
+        self.hideSaveButton = 0
         # width,height= MainWindow.frameGeometry().width(),MainWindow.frameGeometry().height()
         self.width,self.height = MainWindow.frameGeometry().width(),MainWindow.frameGeometry().height()
         self.oneUnit = (self.width + self.height)/100
@@ -108,10 +103,12 @@ class Ui_MainWindow(object):
         self.input_heading_frame.setFrameShadow(QtWidgets.QFrame.Plain)
         self.input_heading_frame.setObjectName("input_heading_frame")
 
-        self.display_heading_label = QtWidgets.QLabel("Add Food Items!!", self.input_heading_frame)
-        self.display_heading_label.setGeometry(QtCore.QRect(0, 0, self.width*.3 -2, 50))
-        self.display_heading_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.display_heading_label.setStyleSheet("QLabel {font-size:20pt; font-weight:600; background-color:#00007f; color:white;}")
+        self.display_heading_button = QtWidgets.QPushButton("Add Food Items!!", self.input_heading_frame)
+        self.display_heading_button.setGeometry(QtCore.QRect(0, 0, self.width*.3 -2, 50))
+        self.display_heading_button.setStyleSheet("*{border: 2px solid grey; border-radius: 5px; background-color: #44449a; color:white; font-size:20pt; font-weight:600;}"
+                                ":hover{border: 2px solid green; border-radius: 5px;}"
+                                    ":pressed{border: 2px solid grey; border-radius: 5px; background-color:#00007f; color:white;}")
+        self.display_heading_button.clicked.connect(self.showSaveButton)
 
         self.image_label = QtWidgets.QLabel(self.input_frame)
         self.image_label.setObjectName("image_label")
@@ -212,6 +209,13 @@ class Ui_MainWindow(object):
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    def showSaveButton(self):
+        self.hideSaveButton = 0
+        self.save_btn.show()
+        self.cancel_btn.show()
+        self.update_btn.hide()
+        self.delete_btn.hide()
+
     def makeFrame(self,frame,objName,xPos,yPos,width,height):
         frame.setGeometry(QtCore.QRect(xPos, yPos, width,height))
         frame.setFrameShape(QtWidgets.QFrame.Box)
@@ -269,20 +273,29 @@ class Ui_MainWindow(object):
     def selectImage(self, MainWindow):
         img_file = QFileDialog.getOpenFileName(self.MainWindow,'??????','./','Image Files(*.png *.jpg *.bmp)')
         self.foodImagePath = os.path.basename(img_file[0])
+        self.foodPathToUpdate = self.foodImagePath
 
         pixmap = QPixmap(img_file[0]) #complete path to show image in label
         w = self.image_label.width()
         h = self.image_label.height()
         self.image_label.setPixmap(pixmap.scaled(w,h))
-        self.save_btn.show()
-        self.cancel_btn.show()
-        self.update_btn.hide()
-        self.delete_btn.hide()
+        if self.hideSaveButton == 0:
+            self.save_btn.show()
+            self.cancel_btn.show()
+            self.update_btn.hide()
+            self.delete_btn.hide()
+            button = self.save_btn
+        else:
+            self.save_btn.hide()
+            self.cancel_btn.hide()
+            self.update_btn.show()
+            self.delete_btn.show()
+            button = self.update_btn
 
         if self.foodImagePath == "":
-            self.save_btn.setEnabled(False)
+            button.setEnabled(False)
         else:
-            self.save_btn.setEnabled(True)
+            button.setEnabled(True)
 
         #to copy selected image to our dir image folder
         src_dir = img_file[0].replace(self.foodImagePath , "" )
@@ -301,14 +314,19 @@ class Ui_MainWindow(object):
         self.name_lineEdit.setText("")
         self.price_lineEdit.setText("")
         self.image_label.clear()
+        userName, regNo , curBal = self.userName, self.registrationNo ,self.currentBalance
         self.setupUi(self.MainWindow)
+        self.userName , self.registrationNo ,self.currentBalance = userName, regNo , curBal
+        self.userNameText.setText(str(self.userName))
+        self.regNoText.setText(str(self.registrationNo))
 
     def update_food(self):
+        catagory = self.category_comboBox.currentText()
         input_name = self.name_lineEdit.text()
         input_price = self.price_lineEdit.text()
         if input_name !="" and input_price != "":
             query = QSqlQuery()
-            query.exec_("UPDATE foodTable SET availability = 1,foodName= '"+input_name+"', price= '"+input_price+"' WHERE foodName = '"+input_name+"' ")
+            query.exec_("UPDATE foodTable SET availability = 1,foodName= '"+input_name+"', price= '"+input_price+"',category = '"+catagory+"',image='"+self.foodPathToUpdate+"' WHERE foodName = '"+self.foodNameToUpdate+"' ")
             self.clearInput()
         else:
             self.showWarningText.setText("PLease fill all the fields.")
@@ -324,9 +342,12 @@ class Ui_MainWindow(object):
             self.showWarningText.setText("PLease fill all the fields.")
 
     def update(self):
+        self.hideSaveButton = 1
         source = self.MainWindow.sender()
         objName = source.objectName()
         foodName1 = source.foodName
+        self.foodNameToUpdate = foodName1
+        self.foodPathToUpdate = source.path
         query = QSqlQuery()
         query.exec_("UPDATE foodTable SET availability = 1 WHERE foodName = '"+foodName1+"' ")
         #creating a list of frames in lucnhTab
