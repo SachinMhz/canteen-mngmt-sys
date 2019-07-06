@@ -37,7 +37,7 @@ class MainInterface(object):
         self.currentBalance = 500
         self.totalCost = 0
         self.MainWindow = MainWindow
-        MainWindow.setWindowTitle("Interface")
+        MainWindow.setWindowTitle("KU Canteen Management System")
         MainWindow.showFullScreen()
         #//for using in full screen
         width,height= MainWindow.frameGeometry().width(),MainWindow.frameGeometry().height()
@@ -80,7 +80,7 @@ class MainInterface(object):
         self.tabWidget.addTab(self.lunchTab, "Lunch/Snacks")
         self.drinkTab = QtWidgets.QWidget()
         self.drinkTab.setObjectName("drinkTab")
-        #self.drinkTab.setStyleSheet("font:150 15pt \"Times New Roman\"; color: #00007f;")
+        self.drinkTab.setStyleSheet("font:150 15pt \"Times New Roman\"; color: #00007f; font-weight:600;")
         self.tabWidget.addTab(self.drinkTab, "Drinks")
 
         self.billLayoutWidget = QtWidgets.QWidget(self.billingArea)
@@ -94,10 +94,10 @@ class MainInterface(object):
 
         #showing Bill labels
         self.billHeadingFrame_topRight()
-        #checking for balance
-        self.showBalanceInfoAndDisableButton()
         #showingImage function contains images arranged in grid format
         self.showingImage2()
+        #checking for balance
+        self.showBalanceInfoAndDisableButton()
         #For Yes NO window confirm Bill
         self.confirmBillWindow()
         #for success Transactions
@@ -226,11 +226,11 @@ class MainInterface(object):
         font = QtGui.QFont("Times New Roman", 15)
         self.registration_lineedit.setFont(font)
         self.password_lineedit.setFont(font)
-
+        """
         self.tempbutton = QtWidgets.QPushButton("hide Login", login)
         self.tempbutton.setGeometry(QtCore.QRect(220,40,100,30))
         self.tempbutton.clicked.connect(self.goToMainInterface)
-
+        """
         self.loginWindowWidget.show()
 
     def goToMainInterface(self):
@@ -470,7 +470,7 @@ class MainInterface(object):
         #higlighting the selected foodFrame
         for frame in frames:
             if frame.objectName() == source.frame:
-                frame.setStyleSheet("#"+frame.objectName()+ " {border : 3px solid blue;}" ":hover{border: 2px solid green; border-radius: 5px;}")
+                frame.setStyleSheet("#"+frame.objectName()+ " {border : 3px solid blue;}" "#"+frame.objectName()+":hover{border: 2px solid green; border-radius: 5px;}")
 
         #checking to see if bill has items or not
         labels = self.billLayoutWidget.findChildren(QtWidgets.QLabel)
@@ -615,14 +615,41 @@ class MainInterface(object):
                                 ":pressed{border: 2px solid grey; border-radius: 5px; background-color: #5ddeaa; color:black;}")
 
     def removeHighLight(self,frameName=0):
+        """
+        #for hovering effect in frames
+        query = QSqlQuery()
+        query.exec_("SELECT* FROM foodTable")
+        availability_list=[]
+        while(query.next()):
+            avail=query.value(5)
+            availability_list.append(avail)
+        imageFrames_lunch = self.lunchTab.findChildren(QtWidgets.QFrame)
+        imageFrames_drinks = self.drinkTab.findChildren(QtWidgets.QFrame)
+        imageFrames = imageFrames_lunch + imageFrames_drinks
+        imageFrame = []
+        for a,b,c in zip (imageFrames[0::3],imageFrames[1::3],imageFrames[2::3]):
+            imageFrame.append(a)
+        for i in range(0,len(imageFrame)):
+            if frameName == 0:
+                if availability_list[i] == 0:
+                    imageFrame[i].setStyleSheet("#"+imageFrame[i].objectName()+ " {border : 1px solid black;}" "#"+imageFrame[i].objectName()+":hover{border: 3px solid red; border-radius: 5px;}")
+                else:
+                    imageFrame[i].setStyleSheet("#"+imageFrame[i].objectName()+ " {border : 1px solid black;}" "#"+imageFrame[i].objectName()+":hover{border: 3px solid green; border-radius: 5px;}")
+
+            if str(imageFrame[i].objectName()) == frameName:
+                        imageFrame[i].setStyleSheet("#"+imageFrame[i].objectName()+ " {border : 1px solid black;}" "#"+imageFrame[i].objectName()+":hover{border: 3px solid green; border-radius: 5px;}")
+        """
         #creating a list of frames in lucnhTab
-        frames = self.lunchTab.findChildren(QtWidgets.QFrame)
+        lunchTab_frames = self.lunchTab.findChildren(QtWidgets.QFrame)
+        drinkTab_frames = self.drinkTab.findChildren(QtWidgets.QFrame)
+        frames = lunchTab_frames + drinkTab_frames
         #removing the higlighting when deleted or decremented
         for frame in frames:
             if frameName==0:
-                frame.setStyleSheet("#"+frame.objectName()+ " {border : 1px solid black;}" ":hover{border: 2px solid green; border-radius: 5px;}")
+                frame.setStyleSheet("#"+frame.objectName()+ " {border : 1px solid black;}" "#"+frame.objectName()+":hover{border: 3px solid green; border-radius: 5px;}")
             if str(frame.objectName()) == frameName:
-                frame.setStyleSheet("#"+frame.objectName()+ " {border : 1px solid black;}" ":hover{border: 2px solid green; border-radius: 5px;}")
+                frame.setStyleSheet("#"+frame.objectName()+ " {border : 1px solid black;}" "#"+frame.objectName()+":hover{border: 3px solid green; border-radius: 5px;}")
+
 
     def IncQuantity(self):
         source = self.MainWindow.sender()
@@ -737,16 +764,6 @@ class MainInterface(object):
         itemPrice.setGeometry(QtCore.QRect(0 , oneUnit + imgHi, imgWi,oneUnit))
         itemPrice.setAlignment(QtCore.Qt.AlignCenter)
         itemPrice.setStyleSheet("QLabel {font-size:15pt; font-weight:600; color:#00007f;}")
-        if availability == 0:
-            itemImageButton.setEnabled(False)
-            frame.setStyleSheet(":hover{border: 0px; border-radius: 5px;}")
-            itemPrice.setStyleSheet("QLabel {font-size:15pt; font-weight:600; color:#00007f; border:0px;}")
-            itemName.setStyleSheet("QLabel {font-size:15pt; font-weight:600; color:#00007f; border:0px;}")
-        else:
-            frame.setStyleSheet(":hover{border: 2px solid green; border-radius: 5px;}")
-            itemPrice.setStyleSheet("QLabel {font-size:15pt; font-weight:600; color:#00007f; border:0px;}")
-            itemName.setStyleSheet("QLabel {font-size:15pt; font-weight:600; color:#00007f; border:0px;}")
-            itemImageButton.setEnabled(True)
 
         #setting image to the button
         if (path != 0):
@@ -788,7 +805,7 @@ class MainInterface(object):
         for food in foodList:
             name,price,cat,path,availability=food[0],str(food[1]),food[2],food[3],food[4]
             objName = name.replace(" ", "")
-            if cat == "Lunch/Snacks":
+            if cat == "Drinks":
                 self.frameImage(name,objName,objName+"Frame",price,imgXDrinks,imgYDrinks,imgWi,imgHi,path,cat,availability)
                 if xDrinksCount < 4:
                     imgXDrinks = imgXDrinks + imgWi + oneUnit

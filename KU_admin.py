@@ -35,6 +35,7 @@ class Ui_MainWindow(object):
         self.ui.regNoText.setText(str(self.registrationNo))
         self.ui.currentBalance = self.currentBalance
         self.ui.showBalanceInfoAndDisableButton()
+        self.ui.removeHighLight()
         self.window.show()
 
     def setupUi(self, MainWindow):
