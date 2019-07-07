@@ -509,7 +509,7 @@ class MainInterface(object):
         plusButton = QtWidgets.QPushButton("+",frame)
         plusButton.setGeometry(QtCore.QRect(250, 5, 20, 30))
         plusButton.setObjectName(objName +"plusButton")
-        plusButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px;  font-size:12pt; font-weight:1000; color:black;}"
+        plusButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px;  font-size:13pt; font-weight:1000; color:black;}"
                                 ":hover{border: 2px solid green; border-radius: 5px;}"
                                     ":pressed{border: 2px solid grey; border-radius: 5px; background-color:green; color:white;}")
         plusButton.clicked.connect(self.IncQuantity)
@@ -520,30 +520,30 @@ class MainInterface(object):
         deleteButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px; font-size:12pt; font-weight:600; color:black;}"
                                 ":hover{border: 2px solid red; border-radius: 5px; }"
                                     ":pressed{border: 2px solid grey; border-radius: 5px; background-color:red; color:white;}")
-        foodLabel = QtWidgets.QLabel(str(source.objectName()),frame)
-        foodLabel.setGeometry(QtCore.QRect(10, 10, 100, 13))
+        foodLabel = QtWidgets.QLabel(str(source.disName),frame)
+        foodLabel.setGeometry(QtCore.QRect(10, 10, 100, 20))
         foodLabel.setObjectName(objName +"foodLabel")
-        foodLabel.setStyleSheet("border: 0px;")
+        foodLabel.setStyleSheet("border: 0px; font-size:10pt; font-weight:600; color:black;")
         priceLabel = QtWidgets.QLabel(str(source.price),frame)
-        priceLabel.setGeometry(QtCore.QRect(150, 10, 100, 13))
+        priceLabel.setGeometry(QtCore.QRect(150, 10, 100, 15))
         priceLabel.setObjectName(objName +"priceLabel")
-        priceLabel.setStyleSheet("border: 0px;")
+        priceLabel.setStyleSheet("border: 0px;  font-size:10pt; font-weight:600; color:black;")
         quantityLabel = QtWidgets.QLabel(str(source.quantity),frame)
-        quantityLabel.setGeometry(QtCore.QRect(230, 10, 16, 16))
+        quantityLabel.setGeometry(QtCore.QRect(230, 10, 16, 15))
         quantityLabel.setObjectName(objName +"quantityLabel")
-        quantityLabel.setStyleSheet("border: 0px;")
+        quantityLabel.setStyleSheet("border: 0px; font-size:10pt; font-weight:600; color:black;")
         amountLabel = QtWidgets.QLabel(str(source.amount),frame)
-        amountLabel.setGeometry(QtCore.QRect(330, 8, 100, 16))
+        amountLabel.setGeometry(QtCore.QRect(330, 10, 100, 15))
         amountLabel.setObjectName(objName +"Amount")
-        amountLabel.setStyleSheet("border: 0px;")
-        rupeePriceLabel = QtWidgets.QLabel("Rs.",frame)
-        rupeePriceLabel.setGeometry(QtCore.QRect(130, 10, 100, 13))
+        amountLabel.setStyleSheet("border: 0px; font-size:10pt; font-weight:600; color:black;")
+        rupeePriceLabel = QtWidgets.QLabel("Rs ",frame)
+        rupeePriceLabel.setGeometry(QtCore.QRect(130, 10, 100, 15))
         rupeePriceLabel.setObjectName(objName +"RsPrice")
-        rupeePriceLabel.setStyleSheet("border: 0px;")
-        rupeeAmountLabel = QtWidgets.QLabel("Rs.",frame)
-        rupeeAmountLabel.setGeometry(QtCore.QRect(310, 10, 100, 13))
+        rupeePriceLabel.setStyleSheet("border: 0px; font-size:10pt; font-weight:600; color:black;")
+        rupeeAmountLabel = QtWidgets.QLabel("Rs ",frame)
+        rupeeAmountLabel.setGeometry(QtCore.QRect(310, 10, 100, 15))
         rupeeAmountLabel.setObjectName(objName +"RsAmount")
-        rupeeAmountLabel.setStyleSheet("border: 0px;")
+        rupeeAmountLabel.setStyleSheet("border: 0px; font-size:10pt; font-weight:600; color:black;")
 
         self.showBalanceInfoAndDisableButton() #to update the balance Info if billLayout doesnt already have item
         self.billLayout.addWidget(frame)
@@ -649,7 +649,7 @@ class MainInterface(object):
                 frame.setStyleSheet("#"+frame.objectName()+ " {border : 1px solid black;}" "#"+frame.objectName()+":hover{border: 3px solid green; border-radius: 5px;}")
             if str(frame.objectName()) == frameName:
                 frame.setStyleSheet("#"+frame.objectName()+ " {border : 1px solid black;}" "#"+frame.objectName()+":hover{border: 3px solid green; border-radius: 5px;}")
-
+        #"""
 
     def IncQuantity(self):
         source = self.MainWindow.sender()
@@ -754,6 +754,7 @@ class MainInterface(object):
         itemImageButton = QtWidgets.QPushButton( frame)
         itemImageButton.setGeometry(QtCore.QRect(5 , oneUnit, imgWi-10,imgHi))
         itemImageButton.setObjectName(objName)
+        itemImageButton.disName = disName
         itemImageButton.price = price
         itemImageButton.frame = frameName
         itemImageButton.quantity = 0

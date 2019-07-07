@@ -6,8 +6,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QDialog, QPushButton, QLabel, QFileDialog, QVBoxLayout
 from PyQt5 import QtGui
 from functools import partial
+import shutil
 
 from PyQt5.QtGui import QPixmap
+
+print( "\\")
 
 
 
@@ -178,6 +181,18 @@ class Ui_MainWindow(object):
         self.cancel_btn.setStyleSheet("font:90 13pt \"Times New Roman\"; color: #00007f; font-weight:600;")
         self.cancel_btn.clicked.connect(self.clearInput)
 
+        self.update_btn = QtWidgets.QPushButton("Update", self.input_frame)
+        self.update_btn.setGeometry(QtCore.QRect( 20,self.height*.85, 180, 40))
+        self.update_btn.setStyleSheet("font:90 13pt \"Times New Roman\"; color: #00007f; font-weight:600;")
+        self.update_btn.clicked.connect(self.update_food)
+        self.update_btn.hide()
+
+        self.delete_btn = QtWidgets.QPushButton("Delete", self.input_frame)
+        self.delete_btn.setGeometry(QtCore.QRect( 220 ,self.height*.85,180, 40))
+        self.delete_btn.setStyleSheet("font:90 13pt \"Times New Roman\"; color: #00007f; font-weight:600;")
+        self.delete_btn.clicked.connect(self.delete_food)
+        self.delete_btn.hide()
+
         self.showWarningText = QtWidgets.QLabel("", self.input_frame)
         self.showWarningText.setGeometry(QtCore.QRect( 50 ,self.height*.85-40,180, 40))
         self.showWarningText.setStyleSheet("font:90 13pt \"Times New Roman\"; color: #00007f; font-weight:500; color:red;")
@@ -252,20 +267,59 @@ class Ui_MainWindow(object):
     def selectImage(self, MainWindow):
         img_file = QFileDialog.getOpenFileName(self.MainWindow,'??????','./','Image Files(*.png *.jpg *.bmp)')
         self.foodImagePath = os.path.basename(img_file[0])
-        pixmap = QPixmap(img_file[0])
+
+        pixmap = QPixmap(img_file[0]) #complete path to show image in label
         w = self.image_label.width()
         h = self.image_label.height()
         self.image_label.setPixmap(pixmap.scaled(w,h))
+        self.save_btn.show()
+        self.cancel_btn.show()
+        self.update_btn.hide()
+        self.delete_btn.hide()
+
         if self.foodImagePath == "":
             self.save_btn.setEnabled(False)
         else:
             self.save_btn.setEnabled(True)
+
+        #to copy selected image to our dir image folder
+        src_dir = img_file[0].replace(self.foodImagePath , "" )
+        img_dir = img_file[0]
+        dst_dir = os.getcwd().replace("\\","/") + "/image/"
+        dst_img = dst_dir + self.foodImagePath
+        for file in os.listdir(src_dir):
+            if file == self.foodImagePath:
+                if os.path.exists(dst_img):
+                    print("asdas")
+                    break
+                shutil.copy(img_dir,dst_dir)
+                break
 
     def clearInput(self):
         self.name_lineEdit.setText("")
         self.price_lineEdit.setText("")
         self.image_label.clear()
         self.setupUi(self.MainWindow)
+
+    def update_food(self):
+        input_name = self.name_lineEdit.text()
+        input_price = self.price_lineEdit.text()
+        if input_name !="" and input_price != "":
+            query = QSqlQuery()
+            query.exec_("UPDATE foodTable SET availability = 1,foodName= '"+input_name+"', price= '"+input_price+"' WHERE foodName = '"+input_name+"' ")
+            self.clearInput()
+        else:
+            self.showWarningText.setText("PLease fill all the fields.")
+
+    def delete_food(self):
+        input_name = self.name_lineEdit.text()
+        input_price = self.price_lineEdit.text()
+        if input_name !="" and input_price != "":
+            query = QSqlQuery()
+            query.exec_("DELETE FROM foodTable WHERE foodName = '"+input_name+"' ")
+            self.clearInput()
+        else:
+            self.showWarningText.setText("PLease fill all the fields.")
 
     def update(self):
         source = self.MainWindow.sender()
@@ -277,20 +331,26 @@ class Ui_MainWindow(object):
         framesLunch = self.lunch_tab.findChildren(QtWidgets.QFrame)
         framesDrink = self.drinks_tab.findChildren(QtWidgets.QFrame)
         frames = framesLunch + framesDrink
-
         if source.availability == 0:
             source.availability = 1
             for frame in frames:
                 if frame.objectName() == source.frame:
                     query.exec_("UPDATE foodTable SET availability = 1 WHERE foodName = '"+foodName1+"' ")
                     frame.setStyleSheet("#"+frame.objectName()+ " {border : 5px solid green;}")
-
         elif source.availability ==1:
             source.availability = 0
             for frame in frames:
                 if frame.objectName() == source.frame:
                     query.exec_("UPDATE foodTable SET availability = 0 WHERE foodName = '"+foodName1+"' ")
                     frame.setStyleSheet("#"+frame.objectName()+ " {border : 5px solid red;}")
+
+        path = os.getcwd().replace("\\","/") + "/image/"+ source.path
+        pixmap = QPixmap(path)
+        self.image_label.setPixmap(pixmap.scaled(self.image_label.width(),self.image_label.height()))
+        self.name_lineEdit.setText(source.foodName)
+        self.price_lineEdit.setText(source.price)
+        self.update_btn.show()
+        self.delete_btn.show()
 
     def saveFoodItem(self):
         input_name = self.name_lineEdit.text()
@@ -335,7 +395,9 @@ class Ui_MainWindow(object):
         itemImageButton.setObjectName(objName)
         itemImageButton.availability = availability
         itemImageButton.frame = frameName
+        itemImageButton.price = str(price)
         itemImageButton.foodName = disName
+        itemImageButton.path = path
         itemPrice = QtWidgets.QLabel("Rs. "+price,frame)
         itemPrice.setGeometry(QtCore.QRect(0 , self.oneUnit + imgHi, imgWi,self.oneUnit))
         itemPrice.setAlignment(QtCore.Qt.AlignCenter)
