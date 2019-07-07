@@ -499,20 +499,27 @@ class MainInterface(object):
         frame.setFrameShadow(QtWidgets.QFrame.Plain)
         frame.setObjectName(objName +"Frame")
         frame.setStyleSheet("border: 2px solid grey; border-radius: 5px;")
+
         minusButton = QtWidgets.QPushButton("-",frame)
         minusButton.setObjectName(objName +"minusButton")
+        minusButton.setGeometry(QtCore.QRect(200, 5, 20, 30))
+        minusButton.clicked.connect(self.DecQuantity)
         minusButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px; font-size:14pt; font-weight:1000; color:black;}"
                                 ":hover{border: 2px solid #f24d0c; border-radius: 5px; }"
                                     ":pressed{border: 2px solid grey; border-radius: 5px; background-color:#f24d0c; color:white;}")
-        minusButton.setGeometry(QtCore.QRect(200, 5, 20, 30))
-        minusButton.clicked.connect(self.DecQuantity)
+
+        plus2Button = QtWidgets.QPushButton("u",frame) #plus2Button is not required delete garyo vane plus button chaldaina idk why
+        plus2Button.hide()
+
         plusButton = QtWidgets.QPushButton("+",frame)
         plusButton.setGeometry(QtCore.QRect(250, 5, 20, 30))
         plusButton.setObjectName(objName +"plusButton")
+        plusButton.clicked.connect(self.IncQuantity)
         plusButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px;  font-size:13pt; font-weight:1000; color:black;}"
                                 ":hover{border: 2px solid green; border-radius: 5px;}"
                                     ":pressed{border: 2px solid grey; border-radius: 5px; background-color:green; color:white;}")
-        plusButton.clicked.connect(self.IncQuantity)
+
+
         deleteButton = QtWidgets.QPushButton("x",frame)
         deleteButton.setGeometry(QtCore.QRect(400 - 30, 5, 20, 30))
         deleteButton.setObjectName(objName +"deleteButton")
@@ -733,8 +740,8 @@ class MainInterface(object):
         labels = self.billLayoutWidget.findChildren(QtWidgets.QFrame)
         buttons = self.billLayoutWidget.findChildren(QtWidgets.QPushButton)
         frameList = []
-        for a,b,c,d,e,f,g,h,i,j in zip (labels[0::7],labels[1::7],labels[2::7],labels[3::7],labels[4::7],labels[5::7],labels[6::7],buttons[0::3],buttons[1::3],buttons[2::3]):
-            frame=[a,b,c,d,e,f,g,h,i,j]
+        for a,b,c,d,e,f,g,h,i,j,k in zip (labels[0::7],labels[1::7],labels[2::7],labels[3::7],labels[4::7],labels[5::7],labels[6::7],buttons[0::4],buttons[1::4],buttons[2::4],buttons[3::4]):
+            frame=[a,b,c,d,e,f,g,h,i,j,k]
             frameList.append(frame)
         return frameList
 

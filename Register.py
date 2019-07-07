@@ -11,7 +11,12 @@ class Ui_Register(object):
         self.ui.setupUi(self.window)
         self.MainWindow = MainWindow
         self.ui.coverFrame.hide()
+        self.ui.userName = self.userName
+        self.ui.registrationNo = self.registrationNo
+        self.ui.currentBalance =self.currentBalance
         self.window.show()
+        self.ui.userNameText.setText(str(self.userName))
+        self.ui.regNoText.setText(str(self.registrationNo))
 
     def setupUi(self, login):
         login.setObjectName("login")
@@ -20,6 +25,10 @@ class Ui_Register(object):
         # self.model = QSqlTableModel()
         # self.model.setTable("usersTable")
         # self.model.select()
+
+        self.userName = "0"
+        self.registrationNo = "0"
+        self.currentBalance = 0
 
         font = QtGui.QFont()
         font.setFamily("Times New Roman")

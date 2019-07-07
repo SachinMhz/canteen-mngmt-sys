@@ -20,8 +20,9 @@ class Ui_MainWindow(object):
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_Register()
         self.ui.setupUi(self.window)
-        #self.MainWindow = MainWindow
-        #self.coverFrame.show()
+        self.ui.userName = self.userName
+        self.ui.registrationNo = self.registrationNo
+        self.ui.currentBalance =self.currentBalance
         self.window.show()
 
     def openUserInterface(self,MainWindow):
@@ -48,6 +49,7 @@ class Ui_MainWindow(object):
         self.userName = "0"
         self.registrationNo = "0"
         self.foodImagePath = ""
+        self.currentBalance = 0
         # width,height= MainWindow.frameGeometry().width(),MainWindow.frameGeometry().height()
         self.width,self.height = MainWindow.frameGeometry().width(),MainWindow.frameGeometry().height()
         self.oneUnit = (self.width + self.height)/100
