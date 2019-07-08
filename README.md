@@ -1,2 +1,4 @@
 # canteen-mngmt-sys
-this is a mini project of HCI.
+
+
+Usability is crucial to any products because if the users cannot achieve their goals effectively, efficiently, and in satisfactory manner. It is a great challenge to design an effective UI as it requires understanding of different disciplines, for example, user’s physical and cognitive capabilities, sociological contexts, computer science and engineering, graphics design, and work domain. KU Canteen Management System is a food coupon system enabling users to choose food items and pay using card instead of physical money. The system is developed as a desktop application where user logins to the system using a RFID tag. Interface issues like deduction modes, availability of food, font sizes etc. were addressed through development strategies like persona creation, ethnographic observation, participatory design and evaluated numerous times through expert reviews like heuristic evaluation, cognitive walkthrough, Norman’s principle.
