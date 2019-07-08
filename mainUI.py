@@ -531,30 +531,30 @@ class MainInterface(object):
 
         minusButton = QtWidgets.QPushButton("-",frame)
         minusButton.setObjectName(objName +"minusButton")
-        minusButton.setGeometry(QtCore.QRect(200, 5, 20, 30))
+        minusButton.setGeometry(QtCore.QRect(200-5, 5, 30, 30))
         minusButton.clicked.connect(self.DecQuantity)
-        minusButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px; font-size:14pt; font-weight:1000; color:black;}"
-                                ":hover{border: 2px solid #f24d0c; border-radius: 5px; }"
+        minusButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px; font-size:14pt; font-weight:1000; color:#f24d0c;}"
+                                ":hover{border: 2px solid #f24d0c; border-radius: 5px; color:#f24d0c;}"
                                     ":pressed{border: 2px solid grey; border-radius: 5px; background-color:#f24d0c; color:white;}")
 
         plus2Button = QtWidgets.QPushButton("u",frame) #plus2Button is not required delete garyo vane plus button chaldaina idk why
         plus2Button.hide()
 
         plusButton = QtWidgets.QPushButton("+",frame)
-        plusButton.setGeometry(QtCore.QRect(250, 5, 20, 30))
+        plusButton.setGeometry(QtCore.QRect(250, 5, 30, 30))
         plusButton.setObjectName(objName +"plusButton")
         plusButton.clicked.connect(self.IncQuantity)
-        plusButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px;  font-size:13pt; font-weight:1000; color:black;}"
-                                ":hover{border: 2px solid green; border-radius: 5px;}"
+        plusButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px;  font-size:13pt; font-weight:1000; color:green;}"
+                                ":hover{border: 2px solid green; border-radius: 5px; color:green;}"
                                     ":pressed{border: 2px solid grey; border-radius: 5px; background-color:green; color:white;}")
 
 
         deleteButton = QtWidgets.QPushButton("x",frame)
-        deleteButton.setGeometry(QtCore.QRect(400 - 30, 5, 20, 30))
+        deleteButton.setGeometry(QtCore.QRect(400 - 40, 5, 30, 30))
         deleteButton.setObjectName(objName +"deleteButton")
         deleteButton.clicked.connect(self.deleteFrame)
-        deleteButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px; font-size:12pt; font-weight:600; color:black;}"
-                                ":hover{border: 2px solid red; border-radius: 5px; }"
+        deleteButton.setStyleSheet("*{border: 2px solid grey; border-radius: 5px; font-size:12pt; font-weight:600; color:red;}"
+                                ":hover{border: 2px solid red; border-radius: 5px; color:red;}"
                                     ":pressed{border: 2px solid grey; border-radius: 5px; background-color:red; color:white;}")
         foodLabel = QtWidgets.QLabel(str(source.disName),frame)
         foodLabel.setGeometry(QtCore.QRect(10, 10, 100, 20))
@@ -625,11 +625,11 @@ class MainInterface(object):
                     textLabels[i].setStyleSheet("color:#850f2a; background-color:grey; font:15pt; border: 2px solid grey; border-radius: 5px; background-color:grey; font-weight:600; ")
                     pushButtons[i].setEnabled(False)
 
-                elif int(self.remainingBalance) <= int(pushButtons[i].price) :
+                elif int(self.remainingBalance) < int(pushButtons[i].price) :
                     pushButtons[i].setEnabled(False)
                     textLabels[i].show()
-                    textLabels[i].setText("insufficient \n Balance")
-                    textLabels[i].setStyleSheet("color:#850f2a; background-color:grey; font:15pt; border: 2px solid grey; border-radius: 5px; background-color:grey; font-weight:600;" )
+                    textLabels[i].setText("Insufficient \n Balance")
+                    textLabels[i].setStyleSheet("color:#850f2a; background-color:grey; font:13pt; border: 2px solid grey; border-radius: 5px; background-color:grey; font-weight:600;" )
                 else:
                     textLabels[i].hide()
                     pushButtons[i].setEnabled(True)
@@ -644,8 +644,8 @@ class MainInterface(object):
                     frame[9].setStyleSheet("*{border: 2px solid grey; border-radius: 5px;  font-size:13pt; font-weight:1000; color:black; background-color:grey;}")
                 else:
                     frame[9].setEnabled(True)
-                    frame[9].setStyleSheet("*{border: 2px solid grey; border-radius: 5px;  font-size:13pt; font-weight:1000; color:black;}"
-                            ":hover{border: 2px solid green; border-radius: 5px;}"
+                    frame[9].setStyleSheet("*{border: 2px solid grey; border-radius: 5px;  font-size:13pt; font-weight:1000; color:green;}"
+                            ":hover{border: 2px solid green; border-radius: 5px; color:green;}"
                                 ":pressed{border: 2px solid grey; border-radius: 5px; background-color:green; color:white;}")
 
 
@@ -659,11 +659,11 @@ class MainInterface(object):
                     textLabels[i].setStyleSheet("color:#850f2a; background-color:grey; font:15pt; border: 2px solid grey; border-radius: 5px; background-color:grey; font-weight:600; ")
                     pushButtons[i].setEnabled(False)
 
-                elif int(self.remainingBalance) <= int(pushButtons[i].price) :
+                elif int(self.remainingBalance) < int(pushButtons[i].price) :
                     pushButtons[i].setEnabled(False)
                     textLabels[i].show()
-                    textLabels[i].setText("insufficient Balance")
-                    textLabels[i].setStyleSheet("color:#850f2a; background-color:grey; font:15pt; border: 2px solid grey; border-radius: 5px; background-color:grey; font-weight:600;" )
+                    textLabels[i].setText("Insufficient \n Balance")
+                    textLabels[i].setStyleSheet("color:#850f2a; background-color:grey; font:13pt; border: 2px solid grey; border-radius: 5px; background-color:grey; font-weight:600;" )
                 else:
                     textLabels[i].hide()
                     pushButtons[i].setEnabled(True)
